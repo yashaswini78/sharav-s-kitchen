@@ -47,22 +47,27 @@ const MenuContent = () => {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      {/* Slide-out Sidebar */}
-      <MainSidebar />
-
       {/* Center - Product Area */}
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* Top - Search & Filters */}
         <div className="p-6 border-b border-border bg-card/50 backdrop-blur-sm">
-          <SearchAndFilters
-            categories={[{ id: 'all', name: 'All', icon: '🍽️' }, ...categories]}
-            selectedCategory={selectedCategory}
-            onSelectCategory={setSelectedCategory}
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            vegOnly={vegOnly}
-            onVegToggle={() => setVegOnly(!vegOnly)}
-          />
+          <div className="flex items-center gap-4">
+            {/* Menu Button */}
+            <MainSidebar />
+            
+            {/* Search & Filters */}
+            <div className="flex-1">
+              <SearchAndFilters
+                categories={[{ id: 'all', name: 'All', icon: '🍽️' }, ...categories]}
+                selectedCategory={selectedCategory}
+                onSelectCategory={setSelectedCategory}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                vegOnly={vegOnly}
+                onVegToggle={() => setVegOnly(!vegOnly)}
+              />
+            </div>
+          </div>
         </div>
 
         {/* Product Grid */}
