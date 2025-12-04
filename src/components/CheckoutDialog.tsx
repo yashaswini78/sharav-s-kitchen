@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -20,7 +22,7 @@ import {
 } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Loader2, MessageCircle } from 'lucide-react';
+import { Loader2, MessageCircle, LogIn } from 'lucide-react';
 
 const ADMIN_WHATSAPP = '+917022855115';
 
@@ -31,6 +33,7 @@ interface CheckoutDialogProps {
 
 export const CheckoutDialog = ({ open, onOpenChange }: CheckoutDialogProps) => {
   const { items, orderType, totalPrice, clearCart } = useCart();
+  const { user, loading: authLoading } = useAuth();
   const tax = Math.round(totalPrice * 0.05);
   const grandTotal = totalPrice + tax;
 
@@ -42,6 +45,24 @@ export const CheckoutDialog = ({ open, onOpenChange }: CheckoutDialogProps) => {
     notes: '',
   });
   const [loading, setLoading] = useState(false);
+
+  // Pre-fill name from profile if available
+  useEffect(() => {
+    if (user) {
+      const fetchProfile = async () => {
+        const { data } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('user_id', user.id)
+          .single();
+        
+        if (data?.full_name) {
+          setFormData(prev => ({ ...prev, name: data.full_name }));
+        }
+      };
+      fetchProfile();
+    }
+  }, [user]);
 
   const deliveryTimeOptions = [
     { value: 'asap', label: 'As soon as possible' },
@@ -115,7 +136,7 @@ Please confirm this order! 🙏`;
       const orderNumber = generateOrderNumber();
       const deliveryLabel = deliveryTimeOptions.find(o => o.value === formData.deliveryTime)?.label || formData.deliveryTime;
 
-      // Save order to database
+      // Save order to database with user_id
       const { error } = await supabase.from('orders').insert({
         order_number: orderNumber,
         customer_name: formData.name.trim(),
@@ -135,6 +156,7 @@ Please confirm this order! 🙏`;
         total: grandTotal,
         status: 'pending',
         payment_status: 'pending',
+        user_id: user?.id,
       });
 
       if (error) throw error;
@@ -183,6 +205,22 @@ Please confirm this order! 🙏`;
         </DialogHeader>
 
         <div className="space-y-4 py-4">
+          {/* Login Required Message */}
+          {!user && !authLoading && (
+            <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-xl p-4 text-center">
+              <LogIn className="w-8 h-8 text-amber-600 mx-auto mb-2" />
+              <p className="font-medium text-amber-800 dark:text-amber-200 mb-2">
+                Sign in to place your order
+              </p>
+              <p className="text-sm text-amber-700 dark:text-amber-300 mb-3">
+                Create an account to track your orders and order history.
+              </p>
+              <Link to="/auth">
+                <Button className="w-full">Sign In / Create Account</Button>
+              </Link>
+            </div>
+          )}
+
           {/* Order Summary */}
           <div className="bg-muted rounded-xl p-3 space-y-2">
             <p className="text-sm font-medium">Order Summary</p>
@@ -208,7 +246,8 @@ Please confirm this order! 🙏`;
             </div>
           </div>
 
-          {/* Customer Details Form */}
+          {/* Customer Details Form - Only show if logged in */}
+          {user && (
           <div className="space-y-3">
             <div className="space-y-2">
               <Label htmlFor="name">Your Name *</Label>
@@ -274,27 +313,30 @@ Please confirm this order! 🙏`;
               />
             </div>
           </div>
+          )}
 
           {/* WhatsApp Info */}
-          <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900 rounded-xl p-3">
-            <p className="text-sm text-green-800 dark:text-green-200">
-              <strong>📱 WhatsApp Checkout:</strong> After clicking "Place Order", 
-              WhatsApp will open with your order details. Send the message to confirm your order with the admin.
-            </p>
-          </div>
+          {user && (
+            <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900 rounded-xl p-3">
+              <p className="text-sm text-green-800 dark:text-green-200">
+                <strong>📱 WhatsApp Checkout:</strong> After clicking "Place Order", 
+                WhatsApp will open with your order details. Send the message to confirm your order with the admin.
+              </p>
+            </div>
+          )}
         </div>
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={loading} className="gap-2">
+          <Button onClick={handleSubmit} disabled={loading || !user} className="gap-2">
             {loading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
               <MessageCircle className="w-4 h-4" />
             )}
-            Place Order via WhatsApp
+            {user ? 'Place Order via WhatsApp' : 'Sign in to Order'}
           </Button>
         </DialogFooter>
       </DialogContent>

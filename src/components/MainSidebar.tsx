@@ -4,7 +4,9 @@ import {
   ChefHat,
   LogIn,
   Shield,
-  Menu
+  Menu,
+  ClipboardList,
+  User
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -46,7 +48,26 @@ export const MainSidebar = () => {
         {/* Navigation */}
         <nav className="flex-1 p-4">
           <ul className="space-y-1">
-            {isAdmin ? (
+            {/* Customer Links */}
+            {user && !isAdmin && (
+              <li>
+                <NavLink
+                  to="/my-orders"
+                  className={({ isActive }) => cn(
+                    "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
+                    isActive
+                      ? "bg-primary text-primary-foreground shadow-md"
+                      : "text-sidebar-foreground hover:bg-sidebar-accent"
+                  )}
+                >
+                  <ClipboardList className="w-5 h-5" />
+                  My Orders
+                </NavLink>
+              </li>
+            )}
+
+            {/* Admin Links */}
+            {isAdmin && (
               <li>
                 <NavLink
                   to="/admin"
@@ -61,7 +82,10 @@ export const MainSidebar = () => {
                   Admin Panel
                 </NavLink>
               </li>
-            ) : (
+            )}
+
+            {/* Login Link for Guests */}
+            {!user && (
               <li>
                 <NavLink
                   to="/auth"
@@ -73,7 +97,7 @@ export const MainSidebar = () => {
                   )}
                 >
                   <LogIn className="w-5 h-5" />
-                  Admin Login
+                  Sign In / Sign Up
                 </NavLink>
               </li>
             )}
