@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
-import { ShoppingBag, Trash2, Minus, Plus, CreditCard, Banknote, Smartphone } from 'lucide-react';
+import { ShoppingBag, Trash2, Minus, Plus, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { OrderType } from '@/types/menu';
+import { CheckoutDialog } from './CheckoutDialog';
 
 const orderTypeLabels: Record<OrderType, string> = {
   'dine-in': 'Dine In',
@@ -10,14 +12,9 @@ const orderTypeLabels: Record<OrderType, string> = {
   'delivery': 'Delivery',
 };
 
-const paymentMethods = [
-  { id: 'card', icon: CreditCard, label: 'Card' },
-  { id: 'cash', icon: Banknote, label: 'Cash' },
-  { id: 'upi', icon: Smartphone, label: 'UPI' },
-];
-
 export const CartSidebar = () => {
   const { items, orderType, setOrderType, updateQuantity, removeFromCart, totalItems, totalPrice } = useCart();
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
   const tax = Math.round(totalPrice * 0.05);
   const grandTotal = totalPrice + tax;
 
@@ -140,27 +137,20 @@ export const CartSidebar = () => {
             <span className="font-display font-bold text-primary">₹{grandTotal}</span>
           </div>
 
-          {/* Payment Options */}
-          <div className="pt-2">
-            <p className="text-xs text-muted-foreground mb-2">Payment Method</p>
-            <div className="flex gap-2">
-              {paymentMethods.map((method) => (
-                <button
-                  key={method.id}
-                  className="flex-1 flex flex-col items-center gap-1 p-2 rounded-lg bg-muted hover:bg-secondary transition-colors"
-                >
-                  <method.icon className="w-5 h-5 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">{method.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <Button variant="hero" size="lg" className="w-full">
-            Place Order
+          <Button 
+            variant="hero" 
+            size="lg" 
+            className="w-full gap-2"
+            onClick={() => setCheckoutOpen(true)}
+          >
+            <MessageCircle className="w-5 h-5" />
+            Order via WhatsApp
           </Button>
         </div>
       )}
+
+      {/* Checkout Dialog */}
+      <CheckoutDialog open={checkoutOpen} onOpenChange={setCheckoutOpen} />
     </aside>
   );
 };
