@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
-import { Loader2 } from 'lucide-react';
-import { CartProvider } from '@/context/CartContext';
+import { Loader2, ShoppingCart } from 'lucide-react';
+import { CartProvider, useCart } from '@/context/CartContext';
 import { MainSidebar } from '@/components/MainSidebar';
 import { SearchAndFilters } from '@/components/SearchAndFilters';
 import { ProductCard } from '@/components/ProductCard';
@@ -8,11 +8,18 @@ import { CartSidebar } from '@/components/CartSidebar';
 import { FloatingOrderBar } from '@/components/FloatingOrderBar';
 import { categories } from '@/data/menuData';
 import { useDishes } from '@/hooks/useDishes';
+import { Button } from '@/components/ui/button';
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 
 const MenuContent = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [vegOnly, setVegOnly] = useState(false);
+  const { totalItems } = useCart();
 
   const { dishes, loading, error } = useDishes();
 
@@ -50,8 +57,8 @@ const MenuContent = () => {
       {/* Center - Product Area */}
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* Top - Search & Filters */}
-        <div className="p-6 border-b border-border bg-card/50 backdrop-blur-sm">
-          <div className="flex items-center gap-4">
+        <div className="p-4 md:p-6 border-b border-border bg-card/50 backdrop-blur-sm">
+          <div className="flex items-center gap-3 md:gap-4">
             {/* Menu Button */}
             <MainSidebar />
             
@@ -67,13 +74,34 @@ const MenuContent = () => {
                 onVegToggle={() => setVegOnly(!vegOnly)}
               />
             </div>
+
+            {/* Mobile Cart Button */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  className="lg:hidden relative h-10 w-10 shrink-0"
+                >
+                  <ShoppingCart className="w-5 h-5" />
+                  {totalItems > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                      {totalItems}
+                    </span>
+                  )}
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-full sm:w-96 p-0">
+                <CartSidebar />
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
 
         {/* Product Grid */}
-        <div className="flex-1 overflow-y-auto p-6 pb-24">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-24">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="font-display text-2xl font-bold text-foreground">
+            <h2 className="font-display text-xl md:text-2xl font-bold text-foreground">
               {categoryName}
             </h2>
             <span className="text-muted-foreground text-sm">
@@ -110,7 +138,7 @@ const MenuContent = () => {
         <FloatingOrderBar />
       </main>
 
-      {/* Right Sidebar - Cart */}
+      {/* Right Sidebar - Cart (Desktop only) */}
       <div className="w-80 border-l border-border bg-card flex-shrink-0 hidden lg:block overflow-y-auto">
         <CartSidebar />
       </div>
