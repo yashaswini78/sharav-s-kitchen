@@ -1,26 +1,12 @@
 import { cn } from '@/lib/utils';
 import { 
-  LayoutDashboard, 
-  UtensilsCrossed, 
-  CalendarDays, 
-  Truck, 
-  Calculator, 
-  Settings, 
   LogOut,
   ChefHat,
-  LogIn
+  LogIn,
+  Shield
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-
-const navItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
-  { icon: UtensilsCrossed, label: 'Table Services', path: '/tables' },
-  { icon: CalendarDays, label: 'Reservations', path: '/reservations' },
-  { icon: Truck, label: 'Delivery', path: '/delivery' },
-  { icon: Calculator, label: 'Accounting', path: '/accounting' },
-  { icon: Settings, label: 'Settings', path: '/settings' },
-];
 
 export const MainSidebar = () => {
   const { user, isAdmin, signOut } = useAuth();
@@ -43,10 +29,10 @@ export const MainSidebar = () => {
       {/* Navigation */}
       <nav className="flex-1 p-4">
         <ul className="space-y-1">
-          {navItems.map((item) => (
-            <li key={item.path}>
+          {isAdmin ? (
+            <li>
               <NavLink
-                to={item.path}
+                to="/admin"
                 className={({ isActive }) => cn(
                   "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
                   isActive
@@ -54,35 +40,31 @@ export const MainSidebar = () => {
                     : "text-sidebar-foreground hover:bg-sidebar-accent"
                 )}
               >
-                <item.icon className="w-5 h-5" />
-                {item.label}
+                <Shield className="w-5 h-5" />
+                Admin Panel
               </NavLink>
             </li>
-          ))}
+          ) : (
+            <li>
+              <NavLink
+                to="/auth"
+                className={({ isActive }) => cn(
+                  "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
+                  isActive
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "text-sidebar-foreground hover:bg-sidebar-accent"
+                )}
+              >
+                <LogIn className="w-5 h-5" />
+                Admin Login
+              </NavLink>
+            </li>
+          )}
         </ul>
       </nav>
 
-      {/* Staff Quick Actions */}
+      {/* User Avatar */}
       <div className="p-4 border-t border-sidebar-border">
-        {isAdmin ? (
-          <NavLink
-            to="/admin"
-            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent transition-all duration-200 mb-2"
-          >
-            <Settings className="w-5 h-5" />
-            Admin Panel
-          </NavLink>
-        ) : (
-          <NavLink
-            to="/auth"
-            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent transition-all duration-200 mb-2"
-          >
-            <LogIn className="w-5 h-5" />
-            Admin Login
-          </NavLink>
-        )}
-        
-        {/* User Avatar */}
         <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-sidebar-accent">
           <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
             <span className="text-primary-foreground text-sm font-semibold">
