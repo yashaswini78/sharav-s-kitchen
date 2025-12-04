@@ -46,18 +46,22 @@ export const CheckoutDialog = ({ open, onOpenChange }: CheckoutDialogProps) => {
   });
   const [loading, setLoading] = useState(false);
 
-  // Pre-fill name from profile if available
+  // Pre-fill name and phone from profile if available
   useEffect(() => {
     if (user) {
       const fetchProfile = async () => {
         const { data } = await supabase
           .from('profiles')
-          .select('full_name')
+          .select('full_name, phone_number')
           .eq('user_id', user.id)
           .single();
         
-        if (data?.full_name) {
-          setFormData(prev => ({ ...prev, name: data.full_name }));
+        if (data) {
+          setFormData(prev => ({ 
+            ...prev, 
+            name: data.full_name || prev.name,
+            phone: data.phone_number || prev.phone,
+          }));
         }
       };
       fetchProfile();
@@ -160,6 +164,14 @@ Please confirm this order! 🙏`;
       });
 
       if (error) throw error;
+
+      // Save phone number to profile for future orders
+      if (user && formData.phone.trim()) {
+        await supabase
+          .from('profiles')
+          .update({ phone_number: formData.phone.trim() })
+          .eq('user_id', user.id);
+      }
 
       // Generate WhatsApp message
       const whatsappMessage = formatOrderForWhatsApp(orderNumber);
