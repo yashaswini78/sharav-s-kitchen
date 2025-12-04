@@ -14,7 +14,117 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      dishes: {
+        Row: {
+          availability_end: string | null
+          availability_start: string | null
+          category: Database["public"]["Enums"]["dish_category"]
+          created_at: string
+          description: string | null
+          discount: number | null
+          id: string
+          image_url: string | null
+          is_available: boolean
+          is_daily_special: boolean
+          is_veg: boolean
+          name: string
+          original_price: number | null
+          price: number
+          updated_at: string
+        }
+        Insert: {
+          availability_end?: string | null
+          availability_start?: string | null
+          category?: Database["public"]["Enums"]["dish_category"]
+          created_at?: string
+          description?: string | null
+          discount?: number | null
+          id?: string
+          image_url?: string | null
+          is_available?: boolean
+          is_daily_special?: boolean
+          is_veg?: boolean
+          name: string
+          original_price?: number | null
+          price: number
+          updated_at?: string
+        }
+        Update: {
+          availability_end?: string | null
+          availability_start?: string | null
+          category?: Database["public"]["Enums"]["dish_category"]
+          created_at?: string
+          description?: string | null
+          discount?: number | null
+          id?: string
+          image_url?: string | null
+          is_available?: boolean
+          is_daily_special?: boolean
+          is_veg?: boolean
+          name?: string
+          original_price?: number | null
+          price?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      orders: {
+        Row: {
+          created_at: string
+          customer_address: string | null
+          customer_name: string
+          customer_phone: string
+          delivery_time: string | null
+          id: string
+          items: Json
+          notes: string | null
+          order_number: string
+          order_type: string
+          payment_status: Database["public"]["Enums"]["payment_status"]
+          status: Database["public"]["Enums"]["order_status"]
+          subtotal: number
+          tax: number
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_address?: string | null
+          customer_name: string
+          customer_phone: string
+          delivery_time?: string | null
+          id?: string
+          items: Json
+          notes?: string | null
+          order_number: string
+          order_type?: string
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          status?: Database["public"]["Enums"]["order_status"]
+          subtotal: number
+          tax?: number
+          total: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_address?: string | null
+          customer_name?: string
+          customer_phone?: string
+          delivery_time?: string | null
+          id?: string
+          items?: Json
+          notes?: string | null
+          order_number?: string
+          order_type?: string
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          status?: Database["public"]["Enums"]["order_status"]
+          subtotal?: number
+          tax?: number
+          total?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +133,21 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      dish_category:
+        | "breakfast"
+        | "lunch"
+        | "snacks"
+        | "dinner"
+        | "beverages"
+        | "desserts"
+      order_status:
+        | "pending"
+        | "accepted"
+        | "preparing"
+        | "out_for_delivery"
+        | "delivered"
+        | "cancelled"
+      payment_status: "pending" | "paid"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +274,24 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      dish_category: [
+        "breakfast",
+        "lunch",
+        "snacks",
+        "dinner",
+        "beverages",
+        "desserts",
+      ],
+      order_status: [
+        "pending",
+        "accepted",
+        "preparing",
+        "out_for_delivery",
+        "delivered",
+        "cancelled",
+      ],
+      payment_status: ["pending", "paid"],
+    },
   },
 } as const
