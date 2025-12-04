@@ -1,19 +1,23 @@
 import { useState, useMemo } from 'react';
+import { Loader2 } from 'lucide-react';
 import { CartProvider } from '@/context/CartContext';
 import { MainSidebar } from '@/components/MainSidebar';
 import { SearchAndFilters } from '@/components/SearchAndFilters';
 import { ProductCard } from '@/components/ProductCard';
 import { CartSidebar } from '@/components/CartSidebar';
 import { FloatingOrderBar } from '@/components/FloatingOrderBar';
-import { categories, menuItems } from '@/data/menuData';
+import { categories } from '@/data/menuData';
+import { useDishes } from '@/hooks/useDishes';
 
 const MenuContent = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [vegOnly, setVegOnly] = useState(false);
 
+  const { dishes, loading, error } = useDishes();
+
   const filteredItems = useMemo(() => {
-    let items = menuItems;
+    let items = dishes;
 
     // Filter by category
     if (selectedCategory === 'popular') {
@@ -37,7 +41,7 @@ const MenuContent = () => {
     }
 
     return items;
-  }, [selectedCategory, searchQuery, vegOnly]);
+  }, [dishes, selectedCategory, searchQuery, vegOnly]);
 
   const categoryName = categories.find(c => c.id === selectedCategory)?.name || 'All Items';
 
@@ -72,15 +76,25 @@ const MenuContent = () => {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-            {filteredItems.map((item, index) => (
-              <div key={item.id} style={{ animationDelay: `${index * 50}ms` }}>
-                <ProductCard item={item} />
-              </div>
-            ))}
-          </div>
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : error ? (
+            <div className="text-center py-12 text-destructive">
+              <p>{error}</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+              {filteredItems.map((item, index) => (
+                <div key={item.id} style={{ animationDelay: `${index * 50}ms` }}>
+                  <ProductCard item={item} />
+                </div>
+              ))}
+            </div>
+          )}
 
-          {filteredItems.length === 0 && (
+          {!loading && !error && filteredItems.length === 0 && (
             <div className="text-center py-12">
               <p className="text-muted-foreground">No items found matching your criteria.</p>
             </div>
