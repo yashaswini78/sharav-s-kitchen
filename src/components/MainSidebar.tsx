@@ -22,9 +22,9 @@ export const MainSidebar = () => {
     <Sheet>
       <SheetTrigger asChild>
         <Button 
-          variant="ghost" 
+          variant="outline" 
           size="icon" 
-          className="fixed top-4 left-4 z-50 bg-background/80 backdrop-blur-sm shadow-md hover:shadow-lg transition-all"
+          className="h-10 w-10 shrink-0 bg-background shadow-sm border-border"
         >
           <Menu className="w-5 h-5" />
         </Button>
