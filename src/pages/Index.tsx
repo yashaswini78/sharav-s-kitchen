@@ -57,8 +57,8 @@ const MenuContent = () => {
       {/* Center - Product Area */}
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* Top - Search & Filters */}
-        <div className="p-4 md:p-6 border-b border-border bg-card/50 backdrop-blur-sm">
-          <div className="flex items-center gap-3 md:gap-4">
+        <div className="p-3 sm:p-4 md:p-6 border-b border-border bg-card/50 backdrop-blur-sm">
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
             {/* Menu Button */}
             <MainSidebar />
             
@@ -99,12 +99,12 @@ const MenuContent = () => {
         </div>
 
         {/* Product Grid */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-24">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="font-display text-xl md:text-2xl font-bold text-foreground">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 pb-24">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-display text-lg sm:text-xl md:text-2xl font-bold text-foreground">
               {categoryName}
             </h2>
-            <span className="text-muted-foreground text-sm">
+            <span className="text-muted-foreground text-xs sm:text-sm">
               {filteredItems.length} items
             </span>
           </div>
@@ -118,7 +118,7 @@ const MenuContent = () => {
               <p>{error}</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {filteredItems.map((item, index) => (
                 <div key={item.id} style={{ animationDelay: `${index * 50}ms` }}>
                   <ProductCard item={item} />
