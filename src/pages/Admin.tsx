@@ -1,19 +1,20 @@
 import { useState } from 'react';
 import { 
-  Users, 
   ShoppingBag, 
   UtensilsCrossed, 
   BarChart3, 
   ArrowLeft,
-  CalendarDays
+  CalendarDays,
+  LogOut
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { DishManagement } from '@/components/admin/DishManagement';
 import { OrderManagement } from '@/components/admin/OrderManagement';
 import { DailyMenuControl } from '@/components/admin/DailyMenuControl';
 import { AdminAnalytics } from '@/components/admin/AdminAnalytics';
+import { useAuth } from '@/hooks/useAuth';
 
 type AdminTab = 'orders' | 'menu' | 'daily' | 'analytics';
 
@@ -26,6 +27,13 @@ const tabs = [
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState<AdminTab>('orders');
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -44,11 +52,18 @@ const Admin = () => {
                 <p className="text-sm text-muted-foreground">Manage orders, menu & analytics</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                <span className="text-primary-foreground text-sm font-semibold">A</span>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                  <span className="text-primary-foreground text-sm font-semibold">
+                    {user?.email?.charAt(0).toUpperCase() || 'A'}
+                  </span>
+                </div>
+                <span className="text-sm font-medium">{user?.email?.split('@')[0] || 'Admin'}</span>
               </div>
-              <span className="text-sm font-medium">Admin</span>
+              <Button variant="ghost" size="icon" onClick={handleSignOut}>
+                <LogOut className="w-4 h-4" />
+              </Button>
             </div>
           </div>
         </div>
