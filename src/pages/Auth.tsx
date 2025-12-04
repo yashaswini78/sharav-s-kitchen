@@ -15,7 +15,7 @@ const passwordSchema = z.string().min(6, 'Password must be at least 6 characters
 
 const Auth = () => {
   const navigate = useNavigate();
-  const { user, loading: authLoading, signIn, signUp } = useAuth();
+  const { user, loading: authLoading, isAdmin, signIn, signUp } = useAuth();
 
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
@@ -28,9 +28,14 @@ const Auth = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (user && !authLoading) {
-      navigate('/admin');
+      // Redirect based on role
+      if (isAdmin) {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
     }
-  }, [user, authLoading, navigate]);
+  }, [user, authLoading, isAdmin, navigate]);
 
   const validateForm = (): boolean => {
     const newErrors: { email?: string; password?: string } = {};
@@ -68,7 +73,7 @@ const Auth = () => {
           }
         } else {
           toast.success('Welcome back!');
-          navigate('/admin');
+          // Navigation handled by useEffect based on role
         }
       } else {
         const { data, error } = await signUp(email, password, fullName);
@@ -113,12 +118,12 @@ const Auth = () => {
               <ChefHat className="w-8 h-8 text-primary" />
             </div>
             <CardTitle className="font-display text-2xl">
-              {isLogin ? 'Admin Sign In' : 'Create Account'}
+              {isLogin ? 'Sign In' : 'Create Account'}
             </CardTitle>
             <CardDescription>
               {isLogin
-                ? 'Sign in to access the admin panel'
-                : 'Create an account to get started'}
+                ? 'Sign in to order food & track your orders'
+                : 'Create an account to start ordering'}
             </CardDescription>
           </CardHeader>
 
@@ -201,11 +206,6 @@ const Auth = () => {
               </button>
             </div>
 
-            {!isLogin && (
-              <p className="mt-4 text-xs text-muted-foreground text-center">
-                Note: After signing up, an admin needs to grant you admin access.
-              </p>
-            )}
           </CardContent>
         </Card>
       </div>
