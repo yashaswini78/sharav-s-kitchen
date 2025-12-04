@@ -1,6 +1,6 @@
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
-import { ShoppingBag, Trash2, Minus, Plus } from 'lucide-react';
+import { ShoppingBag, Trash2, Minus, Plus, CreditCard, Banknote, Smartphone } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { OrderType } from '@/types/menu';
 
@@ -10,11 +10,19 @@ const orderTypeLabels: Record<OrderType, string> = {
   'delivery': 'Delivery',
 };
 
+const paymentMethods = [
+  { id: 'card', icon: CreditCard, label: 'Card' },
+  { id: 'cash', icon: Banknote, label: 'Cash' },
+  { id: 'upi', icon: Smartphone, label: 'UPI' },
+];
+
 export const CartSidebar = () => {
   const { items, orderType, setOrderType, updateQuantity, removeFromCart, totalItems, totalPrice } = useCart();
+  const tax = Math.round(totalPrice * 0.05);
+  const grandTotal = totalPrice + tax;
 
   return (
-    <aside className="bg-card rounded-2xl shadow-card p-4 flex flex-col h-fit sticky top-4">
+    <aside className="p-4 flex flex-col h-full">
       {/* Order Type Tabs */}
       <div className="flex bg-muted rounded-xl p-1 mb-4">
         {(['dine-in', 'takeaway', 'delivery'] as OrderType[]).map((type) => (
@@ -112,21 +120,42 @@ export const CartSidebar = () => {
 
       {/* Cart Footer */}
       {items.length > 0 && (
-        <div className="border-t border-border pt-4 space-y-3">
-          <div className="flex justify-between items-center">
+        <div className="border-t border-border pt-4 space-y-3 mt-auto">
+          <div className="flex justify-between items-center text-sm">
             <span className="text-muted-foreground">Subtotal</span>
-            <span className="font-semibold text-card-foreground">₹{totalPrice}</span>
+            <span className="font-medium text-card-foreground">₹{totalPrice}</span>
+          </div>
+          <div className="flex justify-between items-center text-sm">
+            <span className="text-muted-foreground">Tax (5%)</span>
+            <span className="font-medium text-card-foreground">₹{tax}</span>
           </div>
           {orderType === 'delivery' && (
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center text-sm">
               <span className="text-muted-foreground">Delivery</span>
               <span className="font-semibold text-veg">FREE</span>
             </div>
           )}
-          <div className="flex justify-between items-center text-lg">
+          <div className="flex justify-between items-center text-lg pt-2 border-t border-border">
             <span className="font-display font-semibold">Total</span>
-            <span className="font-display font-bold text-primary">₹{totalPrice}</span>
+            <span className="font-display font-bold text-primary">₹{grandTotal}</span>
           </div>
+
+          {/* Payment Options */}
+          <div className="pt-2">
+            <p className="text-xs text-muted-foreground mb-2">Payment Method</p>
+            <div className="flex gap-2">
+              {paymentMethods.map((method) => (
+                <button
+                  key={method.id}
+                  className="flex-1 flex flex-col items-center gap-1 p-2 rounded-lg bg-muted hover:bg-secondary transition-colors"
+                >
+                  <method.icon className="w-5 h-5 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">{method.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           <Button variant="hero" size="lg" className="w-full">
             Place Order
           </Button>
