@@ -32,47 +32,47 @@ export const ProductCard = ({ item }: ProductCardProps) => {
         </div>
       )}
 
-      <div className="relative h-40 overflow-hidden">
+      <div className="relative h-32 sm:h-40 overflow-hidden">
         <img
           src={item.image}
           alt={item.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
         {item.isPopular && (
-          <span className="absolute top-3 left-3 bg-accent text-accent-foreground text-xs font-semibold px-2 py-1 rounded-full">
+          <span className="absolute top-2 left-2 bg-accent text-accent-foreground text-[10px] sm:text-xs font-semibold px-2 py-1 rounded-full">
             🔥 Popular
           </span>
         )}
         {item.discount && (
-          <span className="absolute top-3 left-3 bg-destructive text-destructive-foreground text-xs font-semibold px-2 py-1 rounded-full">
+          <span className="absolute top-2 left-2 bg-destructive text-destructive-foreground text-[10px] sm:text-xs font-semibold px-2 py-1 rounded-full">
             {item.discount}% OFF
           </span>
         )}
-        <div className="absolute top-3 right-3">
+        <div className="absolute top-2 right-2">
           <div className={item.isVeg ? 'veg-badge' : 'non-veg-badge'} />
         </div>
         {isSelected && (
-          <div className="absolute bottom-3 right-3 bg-primary text-primary-foreground w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">
+          <div className="absolute bottom-2 right-2 bg-primary text-primary-foreground w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-xs font-bold">
             {quantity}
           </div>
         )}
       </div>
       
-      <div className="p-4">
-        <h3 className="font-display font-semibold text-card-foreground text-lg mb-1">
+      <div className="p-3 sm:p-4">
+        <h3 className="font-display font-semibold text-card-foreground text-sm sm:text-lg mb-1 line-clamp-1">
           {item.name}
         </h3>
-        <p className="text-muted-foreground text-sm line-clamp-2 mb-3">
+        <p className="text-muted-foreground text-xs sm:text-sm line-clamp-2 mb-2 sm:mb-3">
           {item.description}
         </p>
         
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="font-display font-bold text-lg text-primary">
+          <div className="flex items-center gap-1 sm:gap-2">
+            <span className="font-display font-bold text-base sm:text-lg text-primary">
               ₹{item.price}
             </span>
             {item.originalPrice && (
-              <span className="text-sm text-muted-foreground line-through">
+              <span className="text-xs text-muted-foreground line-through">
                 ₹{item.originalPrice}
               </span>
             )}
