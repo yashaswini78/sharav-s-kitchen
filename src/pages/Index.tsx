@@ -136,6 +136,27 @@ const MenuContent = () => {
 
         {/* Floating Order Bar */}
         <FloatingOrderBar />
+
+        {/* Floating Cart Button - Mobile */}
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button 
+              variant="default" 
+              size="lg" 
+              className="lg:hidden fixed bottom-20 right-4 z-50 rounded-full h-14 w-14 shadow-lg"
+            >
+              <ShoppingCart className="w-6 h-6" />
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-full sm:w-96 p-0">
+            <CartSidebar />
+          </SheetContent>
+        </Sheet>
       </main>
 
       {/* Right Sidebar - Cart (Desktop only) */}
