@@ -3,10 +3,13 @@ export interface MenuItem {
   name: string;
   description: string;
   price: number;
+  originalPrice?: number;
   image: string;
   category: string;
   isVeg: boolean;
   isPopular?: boolean;
+  isOutOfStock?: boolean;
+  discount?: number;
 }
 
 export interface CartItem extends MenuItem {
