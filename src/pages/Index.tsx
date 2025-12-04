@@ -47,7 +47,7 @@ const MenuContent = () => {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      {/* Left Sidebar - Navigation */}
+      {/* Slide-out Sidebar */}
       <MainSidebar />
 
       {/* Center - Product Area */}
